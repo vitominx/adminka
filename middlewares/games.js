@@ -6,7 +6,7 @@ const getAllGames = async (req, res, next) => {
     res.status(400);
     res.send({
       status: "error",
-      message: "Нет игр в базе данных. Добавьте игру.",
+      message: "Нет игр в базе данных. Добавь игру.",
     });
     return;
   }
@@ -28,6 +28,7 @@ const updateGamesArray = (req, res, next) => {
     } else {
       maximalId = 0;
     }
+
     req.updatedObject = {
       id: maximalId + 1,
       title: req.body.title,
@@ -35,14 +36,12 @@ const updateGamesArray = (req, res, next) => {
       link: req.body.link,
       description: req.body.description,
     };
-
     req.games = [...req.games, req.updatedObject];
+    next();
   } else {
     res.status(400);
     res.send({ status: "error", message: "Игра с таким именем уже есть." });
-    return;
   }
-  next();
 };
 
 const updateGamesFile = async (req, res, next) => {
@@ -56,10 +55,18 @@ const findGameById = (req, res, next) => {
   next();
 };
 
+const deleteGame = (req, res, next) => {
+  const id = req.game.id;
+  const index = req.games.findIndex((item) => item.id === id);
+  req.games.splice(index, 1);
+  next();
+};
+
 module.exports = {
   getAllGames,
   checkIsTitleInArray,
   updateGamesArray,
   updateGamesFile,
   findGameById,
+  deleteGame,
 };
